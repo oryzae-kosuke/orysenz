@@ -62,7 +62,7 @@ app.post("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
-  console.log("🛠 POST（商談名更新）:", oppId, newName);
+  console.log("📝 POSTリクエスト:", oppId, newName);
 
   try {
     const accessToken = await getAccessTokenFromRefreshToken();
@@ -77,10 +77,10 @@ app.post("/opportunity/:id", async (req, res) => {
       }
     );
 
-    res.send("✅ 商談名を更新しました");
+    res.send("✅ 商談名を更新しました（POST）");
   } catch (err) {
-    console.error("❌ 商談名更新失敗:", err.response?.data || err.message);
-    res.status(500).send("商談名の更新に失敗しました");
+    console.error("❌ POST失敗:", err.response?.data || err.message);
+    res.status(500).send("商談名の更新に失敗しました（POST）");
   }
 });
 
