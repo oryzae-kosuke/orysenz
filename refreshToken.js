@@ -1,6 +1,7 @@
 // refreshToken.js など
 const axios = require("axios");
 const qs = require("qs");
+require("dotenv").config();
 
 async function getAccessTokenFromRefreshToken() {
   const data = qs.stringify({
