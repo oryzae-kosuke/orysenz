@@ -15,5 +15,8 @@
     }
   },
   "version": "1.0.0",
-  "frameworkVersion": "2.0"
+  "frameworkVersion": "2.0",
+  "remote": {
+    "https://orysenz.onrender.com": true
+  }
 }
