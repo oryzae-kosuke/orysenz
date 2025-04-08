@@ -1,0 +1,23 @@
+1. Z CLIのバージョン確認
+zcli --version
+
+ーーーーーーーーーーーーーーーーーー
+2. zendeskへのログイン
+zcli login -i
+
+Zendesk APIキー
+8XlZjThJeaary5VBqlvhNjN1SSLp8IFeWaYD0PDS
+
+ーーーーーーーーーーーーーーーーーー
+3. ローカルのテスト
+zcli apps:server
+https://oryzae.zendesk.com/agent/tickets/{ZendeskのチケットID}?zcli_apps=true
+https://oryzae.zendesk.com/agent/tickets/25897?zcli_apps=true
+
+4. テスト用のSF
+ID：006J400000JQzdWIAT
+https://oryzae4.lightning.force.com/lightning/r/Opportunity/006J400000JQzdWIAT/view
+
+ーーーーーーーーーーーーーーーーーー
+5. SFのアクセストークン 
+00D5j00000B8dlW%21ARoAQD1NVG2CSiyNZIPjrs1i22EwpSGx4DqCwA..Wu9MQ7GNbZqB_mzjzsz8VVQsLlrWigwMlmHgJQq_tOUupXkjW7pfE1Kl

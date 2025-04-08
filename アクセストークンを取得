@@ -1,0 +1,10 @@
+SF：接続アプリ
+https://oryzae4.lightning.force.com/lightning/setup/ConnectedApplication/page?address=%2Fapp%2Fmgmt%2Fforceconnectedapps%2FforceAppDetail.apexp%3FretURL%3D%252Fsetup%252FNavigationMenus%252Fhome%26connectedAppId%3D0H4J4000000CbV5KAK%26appLayout%3Dsetup%26tour%3D%26sfdcIFrameOrigin%3Dhttps%253A%252F%252Foryzae4.lightning.force.com%26sfdcIFrameHost%3Dweb%26nonce%3D40743966267b2a1843d2d7febc6cc491e53b3ad6450adf3fa82a128f45b6b4fe%26ltn_app_id%3D%26clc%3D1%26id%3D0CiJ4000000Catz%26applicationId%3D06PJ4000000CbaL
+
+ーーーーーーーーーーーーーーーーーー
+
+URL で確認
+https://login.salesforce.com/services/oauth2/authorize
+?response_type=token
+&client_id=＜ Connected App の Consumer Key ＞
+&redirect_uri=https://login.salesforce.com/services/oauth2/success

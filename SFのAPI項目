@@ -1,0 +1,7 @@
+const data = await res.json();
+
+data.Name;
+商談名;
+
+data.amountfee_c__c;
+売上トータル;
