@@ -2,25 +2,21 @@ const API_BASE = "https://orysenz.onrender.com"; // Render上のミドルウェ�
 
 async function fetchOpportunity() {
   try {
-    // カスタムフィールドからSalesforceのURLを取得
     const client = ZAFClient.init();
-    const fieldKey = "custom_field_11390318154639"; // ← 実際のフィールドIDに置き換えて！
+    client.invoke("resize", { width: "100%", height: "200px" });
+
+    const fieldKey = "custom_field_11390318154639";
     const result = await client.get(`ticket.customField:${fieldKey}`);
     const sfUrl = result[`ticket.customField:${fieldKey}`];
 
-    // 商談IDをURL末尾から抽出（例: https://.../006J400000JQzdWIAT）
-    const client = ZAFClient.init();
-    client
-      .get("ticket.customField:custom_field_11390318154639")
-      .then(({ "ticket.customField:custom_field_11390318154639": sfUrl }) => {
-        const match = sfUrl.match(/Opportunity\/([a-zA-Z0-9]{15,18})/);
-        if (!match) {
-          document.getElementById("opp-name").textContent = "ID抽出失敗";
-          return;
-        }
-        const oppId = match[1];
-        // → ここで Render のAPIなどに fetch して商談データを取得
-      });
+    const match = sfUrl.match(/Opportunity\/([a-zA-Z0-9]{15,18})/);
+    if (!match) {
+      document.getElementById("opp-name").textContent = "ID抽出失敗";
+      return;
+    }
+
+    const oppId = match[1];
+    console.log("🔎 商談ID:", oppId);
 
     const res = await fetch(`${API_BASE}/opportunity/${oppId}`);
     if (!res.ok) {
