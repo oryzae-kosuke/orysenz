@@ -1,4 +1,4 @@
-const API_BASE = "https://orysenz.onrender.com"; // Render上のミドルウェアURL
+const API_BASE = "https://orysenz.onrender.com";
 
 async function fetchOpportunity() {
   try {
@@ -21,27 +21,72 @@ async function fetchOpportunity() {
     const res = await fetch(`${API_BASE}/opportunity/${oppId}`);
     if (!res.ok) {
       const errorText = await res.text();
-      console.error("❌ Error fetching opportunity:", res.status, errorText);
+      console.error("❌ 商談取得エラー:", res.status, errorText);
       document.getElementById("opp-name").textContent = "取得失敗";
       return;
     }
 
     const data = await res.json();
-    console.log("📦 Opportunity Data:", data);
-
-    // 表示処理
-    document.getElementById("opp-name").textContent = data.Name || "なし";
-    document.getElementById("opp-name-input").value = data.Name || "";
-    document.getElementById("opp-amount").textContent =
-      data.amountfee_c__c != null ? `¥${data.amountfee_c__c}` : "未設定";
-    document.getElementById("opp-stage").textContent =
-      data.StageName || "未設定";
+    renderOpportunity(data, oppId);
   } catch (err) {
-    console.error("❗ Unexpected error:", err);
+    console.error("❗ エラー:", err);
     document.getElementById("opp-name").textContent = "エラー";
   }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  fetchOpportunity();
-});
+function renderOpportunity(opp, oppId) {
+  const displayName = document.getElementById("opp-name");
+  const inputField = document.getElementById("opp-name-input");
+  const editBtn = document.getElementById("edit-opp-name");
+  const editBlock = document.getElementById("opp-name-edit");
+  const statusText = document.getElementById("save-status");
+
+  displayName.textContent = opp.Name || "名称不明";
+  inputField.value = opp.Name || "";
+  document.getElementById("opp-amount").textContent =
+    opp.Amount != null ? `¥${opp.Amount}` : "未設定";
+  document.getElementById("opp-stage").textContent = opp.StageName || "未設定";
+
+  // 編集ボタン
+  editBtn.addEventListener("click", () => {
+    displayName.style.display = "none";
+    editBtn.style.display = "none";
+    editBlock.style.display = "inline";
+  });
+
+  // キャンセル
+  document.getElementById("cancel-edit").addEventListener("click", () => {
+    editBlock.style.display = "none";
+    displayName.style.display = "inline";
+    editBtn.style.display = "inline";
+    statusText.textContent = "";
+  });
+
+  // 保存
+  document
+    .getElementById("save-opp-name")
+    .addEventListener("click", async () => {
+      const newName = inputField.value.trim();
+      if (!newName) {
+        statusText.textContent = "商談名を入力してください";
+        return;
+      }
+
+      const res = await fetch(`${API_BASE}/opportunity/${oppId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ Name: newName }),
+      });
+
+      if (res.ok) {
+        statusText.textContent = "✅ 保存しました";
+        location.reload();
+      } else {
+        const errText = await res.text();
+        console.error("❌ 保存失敗:", errText);
+        statusText.textContent = "❌ 保存に失敗しました";
+      }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", fetchOpportunity);
