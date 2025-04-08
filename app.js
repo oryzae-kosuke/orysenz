@@ -55,6 +55,33 @@ app.get("/opportunity/:id", async (req, res) => {
   }
 });
 
+// 🛠 商談名の更新
+app.patch("/opportunity/:id", async (req, res) => {
+  const oppId = req.params.id;
+  const newName = req.body.Name;
+
+  console.log("🛠 PATCHリクエスト:", oppId, newName);
+
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken();
+    await axios.patch(
+      `${INSTANCE_URL}/services/data/v57.0/sobjects/Opportunity/${oppId}`,
+      { Name: newName },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    res.send("✅ 商談名を更新しました");
+  } catch (err) {
+    console.error("❌ PATCH失敗:", err.response?.data || err.message);
+    res.status(500).send("商談名の更新に失敗しました");
+  }
+});
+
 // Salesforce 認可フロー callback
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
