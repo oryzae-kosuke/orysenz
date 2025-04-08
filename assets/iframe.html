@@ -2,6 +2,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
+<<<<<<< HEAD
+=======
+    <title>orysenz app</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 16px;
+        font-size: 14px;
+      }
+    </style>
+>>>>>>> revert-to-working
   </head>
   <body>
     <p>
@@ -14,14 +25,21 @@
       </span>
       <button id="edit-opp-name">✏️ 編集</button>
     </p>
-    <p id="save-status"></p>
 
     <p><strong>売上：</strong> <span id="opp-amount">読み込み中...</span></p>
     <p>
       <strong>ステータス：</strong> <span id="opp-stage">読み込み中...</span>
     </p>
+    <p id="save-status"></p>
 
+    <!-- Zendesk SDK -->
     <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+<<<<<<< HEAD
     <script src="assets/zendesk.js"></script>
+=======
+
+    <!-- JS本体 -->
+    <script src="zendesk.js"></script>
+>>>>>>> revert-to-working
   </body>
 </html>
