@@ -61,7 +61,9 @@ app.patch("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
-  console.log("🛠 PATCHリクエスト:", oppId, newName);
+  console.log("🛠 PATCH /opportunity/:id に到達");
+  console.log("🔧 oppId:", oppId);
+  console.log("✏️ 新しいName:", newName);
 
   try {
     const accessToken = await getAccessTokenFromRefreshToken();
@@ -75,7 +77,7 @@ app.patch("/opportunity/:id", async (req, res) => {
         },
       }
     );
-
+    console.log("✅ PATCH成功");
     res.send("✅ 商談名を更新しました");
   } catch (err) {
     console.error("❌ PATCH失敗:", err.response?.data || err.message);
