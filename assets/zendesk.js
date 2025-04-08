@@ -9,13 +9,18 @@ async function fetchOpportunity() {
     const sfUrl = result[`ticket.customField:${fieldKey}`];
 
     // 商談IDをURL末尾から抽出（例: https://.../006J400000JQzdWIAT）
-    const match = sfUrl.match(/([a-zA-Z0-9]{15,18})$/);
-    if (!match) {
-      console.error("商談IDがURLから取得できませんでした");
-      document.getElementById("opp-name").textContent = "ID抽出失敗";
-      return;
-    }
-    const oppId = match[1];
+    const client = ZAFClient.init();
+    client
+      .get("ticket.customField:custom_field_11390318154639")
+      .then(({ "ticket.customField:custom_field_11390318154639": sfUrl }) => {
+        const match = sfUrl.match(/Opportunity\/([a-zA-Z0-9]{15,18})/);
+        if (!match) {
+          document.getElementById("opp-name").textContent = "ID抽出失敗";
+          return;
+        }
+        const oppId = match[1];
+        // → ここで Render のAPIなどに fetch して商談データを取得
+      });
 
     const res = await fetch(`${API_BASE}/opportunity/${oppId}`);
     if (!res.ok) {

@@ -1,42 +1,46 @@
 const express = require("express");
-const fetch = require("node-fetch"); // Node.js v18以前なら必要
+const axios = require("axios");
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(express.json());
+const CLIENT_ID =
+  "3MVG9pRzvMkjMb6lm9zJuIlsFF2O_L4ZFVI4z1stwfJoOZwTrccwm26viL8RZ0G6nWmuflhh0TbEkFByaIxwi";
+const CLIENT_SECRET =
+  "C97D024FC027F59C43F29EA31333829E53AAF4D060F7A35BA8BE85C69E00C20D";
+const REDIRECT_URI = "https://orysenz.onrender.com/callback";
 
-const SF_INSTANCE = "https://oryzae4.my.salesforce.com";
-const ACCESS_TOKEN = "ここに実際のアクセストークン"; // 今後は環境変数にするのが理想
-
-// 商談情報を取得（IDは動的）
-app.get("/opportunity/:id", async (req, res) => {
-  const oppId = req.params.id;
+app.get("/callback", async (req, res) => {
+  const code = req.query.code;
+  if (!code) {
+    return res.status(400).send("コードがありません");
+  }
 
   try {
-    const sfRes = await fetch(
-      `${SF_INSTANCE}/services/data/v57.0/sobjects/Opportunity/${oppId}`,
+    const tokenRes = await axios.post(
+      "https://login.salesforce.com/services/oauth2/token",
+      null,
       {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${ACCESS_TOKEN}`,
-          "Content-Type": "application/json",
+        params: {
+          grant_type: "authorization_code",
+          code,
+          client_id: CLIENT_ID,
+          client_secret: CLIENT_SECRET,
+          redirect_uri: REDIRECT_URI,
         },
       }
     );
 
-    if (!sfRes.ok) {
-      const error = await sfRes.text();
-      return res.status(sfRes.status).send(error);
-    }
+    const { access_token, refresh_token, instance_url } = tokenRes.data;
+    console.log("✅ Access Token:", access_token);
+    console.log("🔁 Refresh Token:", refresh_token);
+    console.log("🌐 Instance URL:", instance_url);
 
-    const data = await sfRes.json();
-    res.json(data);
+    // 保存して以降のAPIに使う（今回は表示だけ）
+    res.send("認証完了しました！アクセストークンを取得しました 🙌");
   } catch (err) {
-    console.error("❗ Salesforce fetch error:", err);
-    res.status(500).send("Internal Server Error");
+    console.error("❌ トークン取得エラー:", err.response?.data || err);
+    res.status(500).send("トークン取得に失敗しました");
   }
 });
 
-app.listen(port, () => {
-  console.log(`🌐 Listening on port ${port}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Listening on port ${PORT}`));
