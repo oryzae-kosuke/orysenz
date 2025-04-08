@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
+app.use(express.json()); // ← PATCHなどで req.body を使うために必須
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -32,7 +33,7 @@ async function getAccessTokenFromRefreshToken() {
   return res.data.access_token;
 }
 
-// 📦 商談取得ルートを追加（これがないと Zendesk 側からデータを取れない）
+// 📦 商談を取得
 app.get("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   console.log("📥 /opportunity アクセス:", oppId);
@@ -55,8 +56,8 @@ app.get("/opportunity/:id", async (req, res) => {
   }
 });
 
-// 🛠 商談名の更新
-app.patch("/opportunity/:id", express.json(), async (req, res) => {
+// 🛠 商談名の編集（PATCH）
+app.patch("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
@@ -82,7 +83,7 @@ app.patch("/opportunity/:id", express.json(), async (req, res) => {
   }
 });
 
-// Salesforce 認可フロー callback
+// 🔁 Salesforce OAuth2 認可コードからのコールバック
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) {
@@ -116,5 +117,6 @@ app.get("/callback", async (req, res) => {
   }
 });
 
+// 起動
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Listening on port ${PORT}`));
