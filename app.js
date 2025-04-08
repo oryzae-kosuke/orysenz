@@ -6,14 +6,8 @@ require("dotenv").config();
 const { getAccessTokenFromRefreshToken } = require("./refreshToken");
 
 const app = express();
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-app.use(express.json());
+app.use(cors());
+app.use(express.json()); // JSON対応
 
 // 📦 商談データ取得エンドポイント
 app.get("/opportunity/:id", async (req, res) => {
@@ -48,39 +42,6 @@ app.get("/opportunity/:id", async (req, res) => {
   }
 });
 
-// 📝 商談名更新（POSTで）
-app.post("/opportunity/:id", async (req, res) => {
-  const oppId = req.params.id;
-  const newName = req.body.Name;
-  console.log("📝 POSTリクエスト:", oppId, newName);
-
-  try {
-    const accessToken = await getAccessTokenFromRefreshToken();
-
-    await axios.patch(
-      `${process.env.INSTANCE_URL}/services/data/v57.0/sobjects/Opportunity/${oppId}`,
-      { Name: newName },
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    res.send("✅ 商談名を更新しました（POST）");
-  } catch (err) {
-    console.error("❌ POST失敗:", err.response?.data || err.message);
-    res.status(500).send("商談名の更新に失敗しました（POST）");
-  }
-});
-
-// ✅ POSTルートのデバッグ用
-app.post("/debug", (req, res) => {
-  console.log("✅ /debug POST 受信");
-  res.send("POST /debug は動いています 🚀");
-});
-
 // 🔐 Salesforce認証コールバック
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
@@ -108,12 +69,12 @@ app.get("/callback", async (req, res) => {
 
     res.send("認証完了しました！アクセストークンを取得しました 🙌");
   } catch (err) {
-    console.error("❌ トークン取得エラー:", err.response?.data || err.message);
+    console.error("❌ トークン取得エラー:", err.response?.data || err);
     res.status(500).send("トークン取得に失敗しました");
   }
 });
 
-// 🚀 起動
+// 🚀 サーバー起動
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Listening on port ${PORT}`);
