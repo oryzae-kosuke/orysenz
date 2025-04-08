@@ -57,12 +57,12 @@ app.get("/opportunity/:id", async (req, res) => {
   }
 });
 
-// ✏️ 商談名の更新（PATCH）
-app.patch("/opportunity/:id", async (req, res) => {
+// 🛠 商談名の更新（POST で代替）
+app.post("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
-  console.log("🛠 PATCHリクエスト:", oppId, newName);
+  console.log("🛠 POST（商談名更新）:", oppId, newName);
 
   try {
     const accessToken = await getAccessTokenFromRefreshToken();
@@ -77,10 +77,9 @@ app.patch("/opportunity/:id", async (req, res) => {
       }
     );
 
-    console.log("✅ 商談名を更新しました");
     res.send("✅ 商談名を更新しました");
   } catch (err) {
-    console.error("❌ PATCH失敗:", err.response?.data || err.message);
+    console.error("❌ 商談名更新失敗:", err.response?.data || err.message);
     res.status(500).send("商談名の更新に失敗しました");
   }
 });
