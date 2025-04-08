@@ -56,7 +56,7 @@ app.get("/opportunity/:id", async (req, res) => {
 });
 
 // 🛠 商談名の更新
-app.patch("/opportunity/:id", async (req, res) => {
+app.patch("/opportunity/:id", express.json(), async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
