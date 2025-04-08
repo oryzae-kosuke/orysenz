@@ -1,3 +1,4 @@
+// === zendesk.js ===
 const API_BASE = "https://orysenz.onrender.com";
 
 async function fetchOpportunity() {
@@ -44,17 +45,15 @@ function renderOpportunity(opp, oppId) {
   displayName.textContent = opp.Name || "名称不明";
   inputField.value = opp.Name || "";
   document.getElementById("opp-amount").textContent =
-    opp.Amount != null ? `¥${opp.Amount}` : "未設定";
+    opp.Amount != null ? `\u00a5${opp.Amount}` : "未設定";
   document.getElementById("opp-stage").textContent = opp.StageName || "未設定";
 
-  // 編集ボタン
   editBtn.addEventListener("click", () => {
     displayName.style.display = "none";
     editBtn.style.display = "none";
     editBlock.style.display = "inline";
   });
 
-  // キャンセル
   document.getElementById("cancel-edit").addEventListener("click", () => {
     editBlock.style.display = "none";
     displayName.style.display = "inline";
@@ -62,7 +61,6 @@ function renderOpportunity(opp, oppId) {
     statusText.textContent = "";
   });
 
-  // 保存
   document
     .getElementById("save-opp-name")
     .addEventListener("click", async () => {
@@ -73,9 +71,9 @@ function renderOpportunity(opp, oppId) {
       }
 
       const res = await fetch(`${API_BASE}/opportunity/${oppId}`, {
-        method: "PATCH",
+        method: "POST", // PATCH ではなく POST
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ Name: newName }),
+        body: JSON.stringify({ Name: newName, _method: "PATCH" }),
       });
 
       if (res.ok) {

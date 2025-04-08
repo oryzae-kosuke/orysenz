@@ -5,7 +5,7 @@ require("dotenv").config();
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // ← PATCHなどで req.body を使うために必須
+app.use(express.json()); // ← PATCH時に必要！
 
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
@@ -33,13 +33,14 @@ async function getAccessTokenFromRefreshToken() {
   return res.data.access_token;
 }
 
-// 📦 商談を取得
+// 📦 商談取得エンドポイント
 app.get("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
-  console.log("📥 /opportunity アクセス:", oppId);
+  console.log("📩 /opportunity にアクセスあり。oppId:", oppId);
 
   try {
     const accessToken = await getAccessTokenFromRefreshToken();
+    console.log("🔑 AccessToken取得成功");
     const response = await axios.get(
       `${INSTANCE_URL}/services/data/v57.0/sobjects/Opportunity/${oppId}`,
       {
@@ -48,7 +49,7 @@ app.get("/opportunity/:id", async (req, res) => {
         },
       }
     );
-
+    console.log("📥 Salesforceから商談取得成功");
     res.json(response.data);
   } catch (err) {
     console.error("❌ 商談取得失敗:", err.response?.data || err.message);
@@ -56,14 +57,12 @@ app.get("/opportunity/:id", async (req, res) => {
   }
 });
 
-// 🛠 商談名の編集（PATCH）
+// ✏️ 商談名の更新（PATCH）
 app.patch("/opportunity/:id", async (req, res) => {
   const oppId = req.params.id;
   const newName = req.body.Name;
 
-  console.log("🛠 PATCH /opportunity/:id に到達");
-  console.log("🔧 oppId:", oppId);
-  console.log("✏️ 新しいName:", newName);
+  console.log("🛠 PATCHリクエスト:", oppId, newName);
 
   try {
     const accessToken = await getAccessTokenFromRefreshToken();
@@ -77,7 +76,8 @@ app.patch("/opportunity/:id", async (req, res) => {
         },
       }
     );
-    console.log("✅ PATCH成功");
+
+    console.log("✅ 商談名を更新しました");
     res.send("✅ 商談名を更新しました");
   } catch (err) {
     console.error("❌ PATCH失敗:", err.response?.data || err.message);
@@ -85,7 +85,7 @@ app.patch("/opportunity/:id", async (req, res) => {
   }
 });
 
-// 🔁 Salesforce OAuth2 認可コードからのコールバック
+// Salesforceの認証コールバック
 app.get("/callback", async (req, res) => {
   const code = req.query.code;
   if (!code) {
