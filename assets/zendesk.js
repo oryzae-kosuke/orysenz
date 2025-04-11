@@ -36,10 +36,13 @@ async function fetchOpportunity() {
   }
 }
 
+// 金額の取得
 function renderOpportunity(opp) {
   document.getElementById("opp-name").textContent = opp.Name || "名称不明";
-  document.getElementById("opp-amount").textContent =
-    opp.Amount != null ? `\u00a5${opp.Amount}` : "未設定";
+  const total = Number(opp.amountfee_c__c);
+  document.getElementById("opp-amount").textContent = !isNaN(total)
+    ? `¥${total.toLocaleString("ja-JP")}`
+    : "未設定";
   document.getElementById("opp-stage").textContent = opp.StageName || "未設定";
 }
 
