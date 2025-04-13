@@ -74,6 +74,38 @@ app.get("/callback", async (req, res) => {
   }
 });
 
+// ✏️ 商談名を更新するエンドポイント（PATCH）
+app.patch("/opportunity/:id", async (req, res) => {
+  const oppId = req.params.id;
+  const { Name } = req.body;
+
+  if (!Name) return res.status(400).send("Name がありません");
+
+  console.log("🛠 PATCHリクエスト受信：", oppId, Name);
+
+  try {
+    const accessToken = await getAccessTokenFromRefreshToken();
+    const instanceUrl = process.env.INSTANCE_URL;
+
+    const patchRes = await axios.patch(
+      `${instanceUrl}/services/data/v57.0/sobjects/Opportunity/${oppId}`,
+      { Name },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    console.log("✅ Salesforce 商談名更新成功");
+    res.json({ success: true, updated: patchRes.data });
+  } catch (err) {
+    console.error("❌ 商談名更新エラー:", err.response?.data || err.message);
+    res.status(500).send("Salesforce更新に失敗しました");
+  }
+});
+
 // 🚀 サーバー起動
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
