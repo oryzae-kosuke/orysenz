@@ -10,15 +10,15 @@ Zendesk APIキー
 
 ーーーーーーーーーーーーーーーーーー
 4. テスト用のSF
-ID：006J400000JQzdWIAT
-https://oryzae4.lightning.force.com/lightning/r/Opportunity/006J400000JQzdWIAT/view
-
 https://orysenz.onrender.com/opportunity/006J400000JQzdWIAT
 
 ーーーーーーーーーーーーーーーーーー
 5. SFのアクセストークン 
 00D5j00000B8dlW%21ARoAQD1NVG2CSiyNZIPjrs1i22EwpSGx4DqCwA..Wu9MQ7GNbZqB_mzjzsz8VVQsLlrWigwMlmHgJQq_tOUupXkjW7pfE1Kl
 
+ーーーーーーーーーーーーーーーーーー
+6. ローカル環境で確認
+https://oryzae.zendesk.com/agent/tickets/{対象のチケットID}?zcli_apps=true
 
 1. Render.com
 https://dashboard.render.com/web/srv-cvqe0guuk2gs73d3kbeg/settings

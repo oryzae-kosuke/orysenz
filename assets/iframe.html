@@ -3,32 +3,26 @@
   <head>
     <meta charset="utf-8" />
     <title>orysenz app</title>
-    <style>
-      body {
-        font-family: sans-serif;
-        padding: 16px;
-        font-size: 14px;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div>
-      <p>
-        <strong>商談名：</strong><br />
-        <input type="text" id="opp-name" placeholder="読み込み中..." />
-      </p>
+    <div id="opportunity-form">
+      <label for="opp-name-input">商談名</label>
+      <div class="field-value">
+        <span id="opp-name-text">読み込み中...</span>
+        <input type="text" id="opp-name-input" style="display: none" />
+        <button id="edit-btn" class="edit-btn">✏️</button>
+      </div>
 
-      <p>
-        <strong>売上：</strong>
-        <span id="opp-amount">読み込み中...</span>
-      </p>
+      <label>売上</label>
+      <span id="opp-amount">読み込み中...</span>
 
-      <p>
-        <strong>ステータス：</strong>
-        <span id="opp-stage">読み込み中...</span>
-      </p>
-
-      <button id="save-btn">保存</button>
+      <label>ステータス</label>
+      <span id="opp-stage">読み込み中...</span>
+    </div>
+    <div id="edit-actions" style="display: none">
+      <button id="cancel-btn" class="edit-btn cancel">キャンセル</button>
+      <button id="save-btn" class="edit-btn save">保存</button>
     </div>
     <!-- Zendesk SDK -->
     <script src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>

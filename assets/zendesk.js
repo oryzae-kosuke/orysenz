@@ -5,7 +5,7 @@ let currentOppId = null;
 async function fetchOpportunity() {
   try {
     const client = ZAFClient.init();
-    client.invoke("resize", { width: "100%", height: "200px" });
+    client.invoke("resize", { width: "100%", height: "80vh" });
 
     const fieldKey = "custom_field_11390318154639";
     const result = await client.get(`ticket.customField:${fieldKey}`);
@@ -56,7 +56,8 @@ async function handleSave() {
     return;
   }
 
-  const newName = document.getElementById("opp-name").value;
+  const input = document.getElementById("opp-name-input");
+  const newName = input.value;
 
   try {
     const res = await fetch(`${API_BASE}/opportunity/${currentOppId}`, {
@@ -67,14 +68,82 @@ async function handleSave() {
 
     if (!res.ok) throw new Error("Salesforce更新に失敗しました");
 
+    // ✅ 成功したら編集モードを解除
+    document.getElementById("opp-name-text").textContent = newName;
+    document.getElementById("opp-name-text").style.display = "inline";
+    document.getElementById("opp-name-input").style.display = "none";
+
     alert("保存しました！");
-    fetchOpportunity(); // 再読み込み
   } catch (err) {
     console.error("❌ 保存エラー:", err);
     alert("保存エラー：" + err.message);
   }
 }
 
+document.getElementById("edit-btn").addEventListener("click", () => {
+  const span = document.getElementById("opp-name-text");
+  const input = document.getElementById("opp-name-input");
+
+  span.style.display = "none";
+  input.style.display = "inline-block";
+  input.focus();
+});
+
+function renderOpportunity(opp) {
+  const name = opp.Name || "名称不明";
+  document.getElementById("opp-name-text").textContent = name;
+  document.getElementById("opp-name-input").value = name;
+
+  const total = Number(opp.amountfee_c__c);
+  document.getElementById("opp-amount").textContent = !isNaN(total)
+    ? `¥${total.toLocaleString("ja-JP")}`
+    : "未設定";
+  document.getElementById("opp-stage").textContent = opp.StageName || "未設定";
+}
+
+// 編集モードに入ったら表示
+document.getElementById("edit-btn").addEventListener("click", () => {
+  document.getElementById("opp-name-text").style.display = "none";
+  document.getElementById("opp-name-input").style.display = "inline-block";
+
+  document.getElementById("edit-btn").style.display = "none";
+  document.getElementById("edit-actions").style.display = "flex";
+});
+document.getElementById("save-btn").addEventListener("click", async () => {
+  const newName = document.getElementById("opp-name-input").value;
+
+  try {
+    const res = await fetch(`${API_BASE}/opportunity/${currentOppId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Name: newName }),
+    });
+
+    if (!res.ok) throw new Error("Salesforce更新に失敗しました");
+
+    document.getElementById("opp-name-text").textContent = newName;
+    exitEditMode(); // ✅ 保存後に通常モードに戻す
+
+    alert("保存しました！");
+  } catch (err) {
+    alert("保存エラー：" + err.message);
+  }
+});
+
+document.getElementById("cancel-btn").addEventListener("click", () => {
+  // 入力欄の中身を元のテキストに戻す
+  const currentText = document.getElementById("opp-name-text").textContent;
+  document.getElementById("opp-name-input").value = currentText;
+
+  exitEditMode(); // 元の状態に戻す
+});
+// 保存 or キャンセル後は非表示
+function exitEditMode() {
+  document.getElementById("opp-name-input").style.display = "none";
+  document.getElementById("opp-name-text").style.display = "inline";
+  document.getElementById("edit-btn").style.display = "inline-block";
+  document.getElementById("edit-actions").style.display = "none";
+}
 // DOMロード後の初期化処理
 document.addEventListener("DOMContentLoaded", () => {
   fetchOpportunity();
